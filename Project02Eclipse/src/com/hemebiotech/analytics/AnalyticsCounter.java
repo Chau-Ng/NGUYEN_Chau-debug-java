@@ -1,49 +1,48 @@
 package com.hemebiotech.analytics;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class AnalyticsCounter {
-	private static int headacheCount = 0; 
-	private static int rashCount = 0; 
-	private static int pupilCount = 0; 
 
-	public static void main(String[] args) {
-		// first get input
-		try {
+	private ISymptomReader reader;
+	private ISymptomWriter writer;
 
-			BufferedReader reader = new BufferedReader(new FileReader("Project02Eclipse/symptoms.txt"));
-			String line = reader.readLine();
+	public AnalyticsCounter(ISymptomReader reader, ISymptomWriter writer) {
+		this.reader = reader;
+		this.writer = writer;
+	}
 
-	
-			while (line != null) {
-				System.out.println("symptom from file: " + line);
-				if (line.equals("headache")) {
-					headacheCount++;
-					System.out.println("number of headaches: " + headacheCount);
-				} else if (line.equals("rash")) {
-					rashCount++;
-				} else if (line.contains("pupils")) {
-					pupilCount++;
-				}
+	public List<String> getSymptoms() {
+		List<String> symptoms = reader.GetSymptoms();
+		return symptoms;
+	}
 
-				line = reader.readLine(); 
+	public Map<String, Integer> countSymptoms(List<String> symptoms) {
+		Map<String, Integer> symptomsOccurrencesMap = new HashMap<>();
+		for (String symptom : symptoms) {
+			if (symptomsOccurrencesMap.containsKey(symptom)) {
+				symptomsOccurrencesMap.put(symptom, symptomsOccurrencesMap.get(symptom) + 1);
+			} else {
+				symptomsOccurrencesMap.put(symptom, 1);
 			}
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+
 		}
-		// next generate output
-		try {
-		FileWriter writer = new FileWriter("result.out");
-		writer.write("headache: " + headacheCount + "\n");
-		writer.write("rash: " + rashCount + "\n");
-		writer.write("dilated pupils: " + pupilCount + "\n");
-		writer.close();
-		}catch(IOException e) {
-			e.printStackTrace();
-		}
-	}	
-}
+		return symptomsOccurrencesMap;
+	}
+
+	public Map<String, Integer> sortSymptoms(Map<String, Integer> symptomsOccurrencesMap) {
+		Map<String, Integer> sortedSymptomsMap = new TreeMap<>();
+		sortedSymptomsMap.putAll(symptomsOccurrencesMap);
+
+		return sortedSymptomsMap;
+
+	}
+
+	public void writeSymptoms(Map<String, Integer> sortedSymptomsMap) { 
+		writer.writeSymptoms(sortedSymptomsMap);
+	}
+		
+	}
