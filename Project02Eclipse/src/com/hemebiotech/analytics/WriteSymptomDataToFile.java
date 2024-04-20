@@ -20,7 +20,7 @@ public class WriteSymptomDataToFile implements ISymptomWriter {
 				String symptom = entry.getKey();
 				Integer count = entry.getValue();
 
-				writer.write(symptom + ": " + count);
+				writer.write(symptom + ":" + count);
 				writer.newLine();
 			}
 
